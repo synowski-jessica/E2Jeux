@@ -3,9 +3,15 @@ const User = require("../models/user.model");
 const createUser = async (req, res) => {
   const { pseudo, email, password, avatar } = req.body;
   try {
-    const existingUser = await User.findOne({ where: { email: email } });
-    if (existingUser) {
+    const existingEmailUser = await User.findOne({ where: { email: email } });
+    const existingPseudoUser = await User.findOne({
+      where: { pseudo: pseudo },
+    });
+    if (existingEmailUser) {
       return res.status(400).json({ error: "L'utilisateur existe déjà" });
+    }
+    if (existingPseudoUser) {
+      return res.status(400).json({ error: "Le pseudo existe déjà" });
     }
 
     const newUser = await User.create({
