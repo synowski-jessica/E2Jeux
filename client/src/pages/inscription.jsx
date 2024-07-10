@@ -1,20 +1,29 @@
-import React from "react"
 import { useState} from "react"
 
 const Inscription=()=>{
     const [pseudo, setPseudo] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError]= useState('null')
 
     const handleSubmit= async(e)=>{
+        
         e.preventDefault();
         const formData={pseudo,email,password};
         console.log(formData)
         await fetch('http://localhost:3001/api/user',{
             method:'POST',
             headers:{'Content-Type': 'application/json', 'mode':'no-cors'},
-            body: JSON.stringify(formData),});}    
+            body: JSON.stringify(formData),})
+            .then (res=>{
+            return res.json()
+            })
+            .then(res=>{
+            setError(res.error)
+             })
+        ;}    
 
+      
     const [checked,setChecked]=useState(true)
     const toggleCheck=()=>{
         setChecked(!checked)
@@ -32,8 +41,9 @@ const Inscription=()=>{
                 <input type="checkbox" checked={checked} onChange={toggleCheck}/>
                 <label for="fcgu">Je déclare avoir lu et accepté les conditions générales d'utilisation du site</label><br></br>
                 <button disabled={!checked}>Envoyer</button>
-                </form>
-            </div>
+            </form>
+            <div>{error}</div>
+        </div>
         </>
     )
 }
