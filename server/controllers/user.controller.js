@@ -4,9 +4,15 @@ const createUser = async (req, res) => {
   const { pseudo, email, password } = req.body;
   console.log(req.body);
   try {
-    const existingUser = await User.findOne({ where: { email: email } });
-    if (existingUser) {
-      return res.status(400).json({ error: "L'utilisateur existe déjà" });
+    const existingEmailUser = await User.findOne({ where: { email: email } });
+    const existingPseudoUser = await User.findOne({
+      where: { pseudo: pseudo },
+    });
+    if (existingEmailUser) {
+      return res.status(400).send({ error: "L'utilisateur existe déjà" });
+    }
+    if (existingPseudoUser) {
+      return res.status(400).send({ error: "Le pseudo existe déjà" });
     }
 
     const newUser = await User.create({
@@ -16,7 +22,7 @@ const createUser = async (req, res) => {
     });
 
     res.status(201).json(newUser);
-    res.send("Bienvenue, " + req.body.pseudo);
+    res.status(201).send({ message: "Bienvenue, " + req.body.pseudo });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
